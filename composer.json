@@ -1,5 +1,5 @@
 {
-    "name": "fenguoz/bsc-php",
+    "name": "sasou/bsc-php",
     "description": "Support Binance's BNB and BEP20, which include functions such as address creation, balance query, transaction transfer, query the latest blockchain, query information based on the blockchain, and query information based on the transaction hash",
     "keywords": [
         "php",
@@ -8,12 +8,12 @@
         "bep20"
     ],
     "type": "library",
-    "homepage": "https://github.com/Fenguoz/bsc-php",
+    "homepage": "https://github.com/sasou/bsc-php",
     "license": "MIT",
     "authors": [
         {
-            "name": "Fenguoz",
-            "email": "243944672@qq.com"
+            "name": "sasou",
+            "email": "zaipd@qq.com"
         }
     ],
     "require": {
@@ -31,7 +31,7 @@
         "ext-openssl": "*",
         "ext-json": "*",
         "ext-bcmath": "*",
-        "web3p/ethereum-tx": "^0.4.3"
+        "sasou/ethereum-tx": "^1.0"
     },
     "autoload": {
         "psr-4": {
