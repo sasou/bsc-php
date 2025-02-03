@@ -421,6 +421,56 @@ class Utils
         return $bn;
     }
 
+    public static function formatBalance($balance, $decimals = 6) {
+        // 去掉0x前缀
+        $balance = str_replace('0x', '', $balance);
+    
+        // 将余额从十六进制字符串转换为十进制大整数
+        $balanceInt = gmp_init($balance, 16);
+    
+        // 计算10^decimals
+        $divisor = gmp_pow(10, $decimals);
+    
+        // 将余额除以10^decimals得到实际余额
+        $integerPart = gmp_div_q($balanceInt, $divisor); // 整数部分
+        $fractionalPart = gmp_mod($balanceInt, $divisor); // 小数部分
+    
+        // 将整数部分和小数部分拼接为字符串
+        $formattedBalance = gmp_strval($integerPart) . '.' . str_pad(gmp_strval($fractionalPart), $decimals, '0', STR_PAD_LEFT);
+    
+        return $formattedBalance;
+    }
+
+    /**
+     * 将USDT金额转换为最小单位
+     *
+     * @param float $amount USDT金额
+     * @return string 最小单位的金额（字符串）
+     */
+    public static function convertAmountToWei($amount, $decimals = 18)
+    {
+        // USDT精度为18位小数
+        return bcmul($amount, bcpow(10, $decimals), 0);
+    }
+
+    /**
+     * 将最小单位金额转换为十六进制格式
+     *
+     * @param string $minUnit 最小单位的金额（字符串）
+     * @return string 十六进制格式的金额
+     */
+    public static function convertMinUnitToHex($minUnit)
+    {
+        // 将字符串转换为整数
+        $minUnitInt = intval($minUnit);
+
+        // 将整数转换为十六进制
+        $hex = dechex($minUnitInt);
+
+        // 补齐64位长度（32字节）
+        return str_pad($hex, 64, '0', STR_PAD_LEFT);
+    }
+
     /**
      * 根据精度展示资产
      * @param $number
