@@ -29,15 +29,15 @@ class BEP20 extends Bnb
         $params['data'] = "0x{$formatMethod}{$formatAddress}";
 
         $balance = $this->proxyApi->ethCall($params);
-        return Utils::toDisplayAmount($balance, $this->decimals);
+        return Utils::formatBalance($balance, $this->decimals);
     }
 
-    public function transfer(string $privateKey, string $to, float $value, string $gasPrice = 'standard')
+    public function transfer(string $privateKey, string $to, float $value, string $gasPrice = '')
     {
         $from = PEMHelper::privateKeyToAddress($privateKey);
         $nonce = $this->proxyApi->getNonce($from);
         if (!Utils::isHex($gasPrice)) {
-            $gasPrice = Utils::toHex(self::gasPriceOracle($gasPrice), true);
+            $gasPrice = $this->proxyApi->gasPrice();
         }
         $params = [
             'nonce' => "$nonce",
@@ -48,7 +48,7 @@ class BEP20 extends Bnb
             'value' => Utils::NONE,
             'chainId' => self::getChainId($this->proxyApi->getNetwork()),
         ];
-        $val = Utils::toMinUnitByDecimals("$value", $this->decimals);
+        $val = Utils::convertAmountToWei($value, $this->decimals);
 
         $method = 'transfer(address,uint256)';
         $formatMethod = Formatter::toMethodFormat($method);
