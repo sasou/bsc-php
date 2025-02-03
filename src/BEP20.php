@@ -36,9 +36,10 @@ class BEP20 extends Bnb
     {
         $from = PEMHelper::privateKeyToAddress($privateKey);
         $nonce = $this->proxyApi->getNonce($from);
-        if (!Utils::isHex($gasPrice)) {
+        if ($gasPrice == '') {
             $gasPrice = $this->proxyApi->gasPrice();
         }
+        
         $params = [
             'nonce' => "$nonce",
             'from' => $from,
