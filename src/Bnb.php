@@ -39,7 +39,9 @@ class Bnb
     {
         $from = PEMHelper::privateKeyToAddress($privateKey);
         $nonce = $this->proxyApi->getNonce($from);
-        $gasPrice = $this->proxyApi->gasPrice();
+        if ($gasPrice == '') {
+            $gasPrice = $this->proxyApi->gasPrice();
+        }
 
         $eth = Utils::convertAmountToWei($value, 18);
         $eth = Utils::convertMinUnitToHex($eth);
