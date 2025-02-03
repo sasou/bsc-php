@@ -18,20 +18,6 @@ class Bnb
         return call_user_func_array([$this->proxyApi, $name], $arguments);
     }
 
-    // type:[standard|fast|rapid]
-    public static function gasPriceOracle($type = 'standard')
-    {
-        $url = 'https://gbsc.blockscan.com/gasapi.ashx?apikey=key&method=pendingpooltxgweidata';
-        $res = Utils::httpRequest('GET', $url);
-        if ($type && isset($res['result'][$type . 'gaspricegwei'])) {
-            $price = Utils::toWei((string)$res['result'][$type . 'gaspricegwei'], 'gwei');
-            //            $price = $price * 1e9;
-            return $price;
-        } else {
-            return $res;
-        }
-    }
-
     public static function getChainId($network): int
     {
         $chainId = 56;
@@ -49,25 +35,23 @@ class Bnb
         return $chainId;
     }
 
-    public function transfer(string $privateKey, string $to, float $value, string $gasPrice = 'standard')
+    public function transfer(string $privateKey, string $to, float $value, string $gasPrice = '')
     {
         $from = PEMHelper::privateKeyToAddress($privateKey);
         $nonce = $this->proxyApi->getNonce($from);
         if (!Utils::isHex($gasPrice)) {
-            $gasPrice = Utils::toHex(self::gasPriceOracle($gasPrice), true);
+            $gasPrice = $this->proxyApi->gasPrice();
         }
 
-        $eth = Utils::toWei("$value", 'ether');
-        //        $eth = $value * 1e16;
-        $eth = Utils::toHex($eth, true);
-
+        $eth = Utils::convertAmountToWei($value, 18);
+        $eth = Utils::convertMinUnitToHex($eth);
         $transaction = new Transaction([
             'nonce' => "$nonce",
             'from' => $from,
             'to' => $to,
             'gas' => '0x76c0',
             'gasPrice' => "$gasPrice",
-            'value' => "$eth",
+            'value' => '0x' . $eth,
             'chainId' => self::getChainId($this->proxyApi->getNetwork()),
         ]);
 
