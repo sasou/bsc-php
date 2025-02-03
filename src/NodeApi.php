@@ -55,7 +55,7 @@ data;
     function bnbBalance(string $address, int $decimals = 18)
     {
         $balance = $this->send('eth_getBalance', ['address' => $address, 'latest']);
-        return Utils::toDisplayAmount($balance, $decimals);
+        return Utils::formatBalance($balance, $decimals);
     }
 
     function receiptStatus(string $txHash): bool
